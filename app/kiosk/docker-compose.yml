@@ -1,0 +1,83 @@
+include:
+  # stt
+  - ../../module/speech2text/docker-compose.yml 
+
+services:
+  tts:
+    image: ghcr.io/matatonic/openedai-speech:latest
+    container_name: tts
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - TTS_HOME=/app/voices
+      - HF_HOME=/app/hf_home
+    volumes:
+      - ./.cache/tts/voices:/app/voices
+      - ./.cache/tts/config:/app/config
+      - ./.cache/tts/hf_home:/app/hf_home    
+
+  ipex-llm-ollama:
+    image: intelanalytics/ipex-llm-inference-cpp-xpu:2.2.0-SNAPSHOT
+    container_name: ipex-llm-ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    devices:
+      - /dev/dri
+    volumes:
+      - ./.cache/ollama:/root/.ollama/models
+    environment:
+      - PATH=/llm/ollama:${PATH}
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_KEEP_ALIVE=-1
+      - no_proxy=localhost,127.0.0.1
+      - ZES_ENABLE_SYSMAN=1
+      - OLLAMA_INTEL_GPU=true
+      - ONEAPI_DEVICE_SELECTOR=level_zero:0
+      - DEVICE=Arc
+    shm_size: 32G
+    deploy:
+      resources:
+        limits:
+          memory: 32G
+    command: /bin/bash -c "cd /llm/scripts/ && \
+             source ipex-llm-init --gpu --device Arc >> \
+             ipex-llm-init.log 2>&1 && \
+             bash start-ollama.sh && \
+             tail -f /llm/ollama/ollama.log"
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.5.4
+    container_name: open-webui
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./.cache/open-webui:/app/backend/data
+    environment:
+      - OLLAMA_BASE_URL=http://ipex-llm-ollama:11434
+      - AUDIO_STT_ENGINE=openai
+      - AUDIO_STT_MODEL=whisper-1
+      - AUDIO_STT_OPENAI_API_BASE_URL=http://stt:9000/v1
+      - AUDIO_STT_OPENAI_API_KEY=no-need
+      - AUDIO_TTS_ENGINE=openai
+      - AUDIO_TTS_MODEL=tts-1
+      - AUDIO_TTS_OPENAI_API_BASE_URL=http://tts:8000/v1
+      - AUDIO_TTS_OPENAI_API_KEY=no-need
+      - AUDIO_TTS_SPLIT_ON=punctuation
+      - AUDIO_TTS_VOICE=alloy
+      
+      # - WHISPER_MODEL=deepdml/faster-whisper-large-v3-turbo-ct2
+      # - OPENAI_API_BASE_URL=http://open-webui-pipelines:9099
+      # - OPENAI_API_KEY=0p3n-w3bu!
+
+  # open-webui-pipelines:
+  #   image: ghcr.io/open-webui/pipelines:main
+  #   container_name: open-webui-pipelines
+  #   restart: always
+  #   ports:
+  #     - "9099:9099"
+
+networks:
+  app-network:
