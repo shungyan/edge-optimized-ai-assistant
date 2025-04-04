@@ -29,7 +29,7 @@ sudo apt install ffmpeg -y
 
 ### 3. Clone this repo & build docker image
 
-Note: If operating behind corporate firewall, setup the proxy settings in Linux environment before continuing
+Note: If operating behind corporate firewall, setup the proxy settings, e.g. http_proxy, https_proxy, in Linux environment before continuing
 
 ```sh
 git clone https://github.com/huichuno/edge-optimized-ai-assistant.git && cd edge-optimized-ai-assistant/app/kiosk
@@ -48,13 +48,13 @@ docker compose -f docker-compose-lnl.yml -f compose.override.yml up -d
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Usage
 
-# Usage
-
-## Stop containers & microservices
+### Stop containers & microservices
 ```sh
  docker compose -f docker-compose-lnl.yml down
 ```
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
