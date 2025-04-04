@@ -43,7 +43,9 @@ docker compose -f docker-compose-lnl.yml build
 docker compose -f docker-compose-lnl.yml -f compose.override.yml up -d
 ```
 
-### 5. Optional Installation
+### 5. Launch browser and navigate to **http://locahost:8080/** on local machine or **http://\<ip addr\>:8080/**  to access Open-WebUI and run language model on-device
+
+### 6. Optional Installation
 * [lazydocker](https://github.com/jesseduffield/lazydocker) - A simple terminal UI to visualize and interact with containers. After install, launch from `~/.local/bin/lazydocker`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
