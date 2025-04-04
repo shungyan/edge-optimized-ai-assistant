@@ -13,6 +13,9 @@ services:
     ports:
       - "9000:9000"
     environment:
+      - http_proxy=${http_proxy:-}
+      - https_proxy=${https_proxy:-}
+      - no_proxy=open-webui,localhost,127.0.0.1
       - HF_HOME=/app/hf_home
     env_file:
       - whisper.env

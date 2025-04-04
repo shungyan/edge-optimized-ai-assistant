@@ -10,6 +10,9 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - http_proxy=${http_proxy:-}
+      - https_proxy=${https_proxy:-}
+      - no_proxy=open-webui,localhost,127.0.0.1
       - TTS_HOME=/app/voices
       - HF_HOME=/app/hf_home
     volumes:
@@ -28,10 +31,12 @@ services:
     volumes:
       - ./.cache/ollama:/root/.ollama/models
     environment:
+      # Do do not set http_proxy. see issue: https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/discussions/20
+      - https_proxy=${https_proxy:-}
+      - no_proxy=open-webui,localhost,127.0.0.1
       - PATH=/llm/ollama:${PATH}
       - OLLAMA_HOST=0.0.0.0
       - OLLAMA_KEEP_ALIVE=-1
-      - no_proxy=localhost,127.0.0.1
       - ZES_ENABLE_SYSMAN=1
       - OLLAMA_INTEL_GPU=true
       - ONEAPI_DEVICE_SELECTOR=level_zero:0
@@ -56,6 +61,9 @@ services:
     volumes:
       - ./.cache/open-webui:/app/backend/data
     environment:
+      - http_proxy=${http_proxy:-}
+      - https_proxy=${https_proxy:-}
+      - no_proxy=stt,tts,ipex-llm-ollama,localhost,127.0.0.1
       - OLLAMA_BASE_URL=http://ipex-llm-ollama:11434
       - AUDIO_STT_ENGINE=openai
       - AUDIO_STT_MODEL=whisper-1
@@ -67,19 +75,6 @@ services:
       - AUDIO_TTS_OPENAI_API_KEY=no-need
       - AUDIO_TTS_SPLIT_ON=punctuation
       - AUDIO_TTS_VOICE=alloy
-      - RAG_EMBEDDING_MODEL_AUTO_UPDATE=false
-      - RAG_RERANKING_MODEL_AUTO_UPDATE=false
-      
-      # - WHISPER_MODEL=deepdml/faster-whisper-large-v3-turbo-ct2
-      # - OPENAI_API_BASE_URL=http://open-webui-pipelines:9099
-      # - OPENAI_API_KEY=0p3n-w3bu!
-
-  # open-webui-pipelines:
-  #   image: ghcr.io/open-webui/pipelines:main
-  #   container_name: open-webui-pipelines
-  #   restart: always
-  #   ports:
-  #     - "9099:9099"
 
 networks:
   app-network:
