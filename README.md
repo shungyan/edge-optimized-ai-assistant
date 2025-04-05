@@ -4,15 +4,15 @@
 
 This project contains the software component and ingredients to enable optimized generative AI application on Intel Edge hardware
 
-# Getting Started
+## Getting Started
 
-## Prerequisites
+### Prerequisites
 * A working [Ubuntu 24.10 LTS](https://releases.ubuntu.com/oracular/ubuntu-24.10-desktop-amd64.iso) host
 * [Intel GPU Driver Installation](https://www.intel.com/content/www/us/en/developer/articles/tool/pytorch-prerequisites-for-intel-gpu/2-6.html#driver-installation) (Optional)
 
-## Installation
+### Installation
 
-### 1. Install Docker Compose from [(here)](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
+1\. Install Docker Compose from [(here)](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 
 Add user to docker group, logging out and back in to apply change
 
@@ -21,13 +21,13 @@ sudo usermod -aG docker $USER
 newgrp $USER
 ```
 
-### 2. Install FFmpeg
+2\. Install FFmpeg
 
 ```sh
 sudo apt install ffmpeg -y
 ```
 
-### 3. Clone repo & build docker image
+3\. Clone repo & build docker image
 
 Note: If operating behind corporate firewall, setup the proxy settings, e.g. http_proxy, https_proxy, in Linux environment before continuing
 
@@ -37,7 +37,7 @@ git clone https://github.com/huichuno/edge-optimized-ai-assistant.git && cd edge
 docker compose -f docker-compose-lnl.yml build
 ```
 
-### 4. Start application and services
+4\. Start application and services
 
 Note: When launching the application for the first time, please allow a few minutes for the dependencies to download. You may check the containers log using *lazydocker*
 
@@ -45,26 +45,30 @@ Note: When launching the application for the first time, please allow a few minu
 docker compose -f docker-compose-lnl.yml -f compose.override.yml up -d
 ```
 
-### 5. Launch browser and navigate to ***http://locahost:8080/*** on local machine or ***http://\<ip addr\>:8080/*** to access Open WebUI and run language model locally on-device
+5\. Launch browser and navigate to ***http://locahost:8080/*** on local machine or ***http://\<ip addr\>:8080/*** to access Open WebUI and run language model locally on-device
 
-### 6. Optional Installation
+6\. Optional Installation
 * [lazydocker](https://github.com/jesseduffield/lazydocker) - A simple terminal UI to visualize and interact with containers. After install, launch from `~/.local/bin/lazydocker`
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Usage
+## How-To
 
 ### Stop application and services
 ```sh
- docker compose -f docker-compose-lnl.yml down
+docker compose -f docker-compose-lnl.yml -f compose.override.yml down
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Supported Platforms
 
-# For Developer
+* Intel(R) Core(TM) Ultra Processors (Series 2)
 
-### Install `uv` to manage python packages
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+## For Developer
+
+### Install *uv* to manage python packages
 ```sh
 sudo apt install curl -y
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -72,7 +76,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 echo 'eval "$(uv generate-shell-completion bash)"' >> ~/.bashrc
 ```
 
-### Create an example project using `uv`
+### Create an example project using *uv*
 ```sh
 mkdir speech2text && cd speech2text
 uv venv --python 3.12
