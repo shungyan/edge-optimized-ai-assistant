@@ -27,7 +27,7 @@ newgrp $USER
 sudo apt install ffmpeg -y
 ```
 
-### 3. Clone this repo & build docker image
+### 3. Clone repo & build docker image
 
 Note: If operating behind corporate firewall, setup the proxy settings, e.g. http_proxy, https_proxy, in Linux environment before continuing
 
@@ -37,13 +37,15 @@ git clone https://github.com/huichuno/edge-optimized-ai-assistant.git && cd edge
 docker compose -f docker-compose-lnl.yml build
 ```
 
-### 4. Start containers & microservices
+### 4. Start application and services
+
+Note: When launching the application for the first time, please allow a few minutes for the dependencies to download. You may check the containers log using *lazydocker*
 
 ```sh
 docker compose -f docker-compose-lnl.yml -f compose.override.yml up -d
 ```
 
-### 5. Launch browser and navigate to **http://locahost:8080/** on local machine or **http://\<ip addr\>:8080/**  to access Open-WebUI and run language model on-device
+### 5. Launch browser and navigate to ***http://locahost:8080/*** on local machine or ***http://\<ip addr\>:8080/*** to access Open WebUI and run language model locally on-device
 
 ### 6. Optional Installation
 * [lazydocker](https://github.com/jesseduffield/lazydocker) - A simple terminal UI to visualize and interact with containers. After install, launch from `~/.local/bin/lazydocker`
@@ -52,7 +54,7 @@ docker compose -f docker-compose-lnl.yml -f compose.override.yml up -d
 
 ## Usage
 
-### Stop containers & microservices
+### Stop application and services
 ```sh
  docker compose -f docker-compose-lnl.yml down
 ```
