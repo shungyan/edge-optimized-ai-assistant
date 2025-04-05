@@ -59,7 +59,10 @@ docker compose -f docker-compose-lnl.yml -f compose.override.yml down
 
 ## Supported Platforms
 
-* Intel(R) Core(TM) Ultra Processors (Series 2)
+| Codename | Product Name |
+|--|--|
+| Meteor Lake | Intel(R) Core(TM) Ultra Processors (Series 1) |
+| Lunar Lake, Arrow Lake | Intel(R) Core(TM) Ultra Processors (Series 2) |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
