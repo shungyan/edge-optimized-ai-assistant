@@ -12,9 +12,7 @@ This project contains the software component and ingredients to enable optimized
 
 ### Installation
 
-1\. Install Docker Compose from [(here)](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
-
-Add user to docker group, logging out and back in to apply change
+1\. Install Docker Compose from [(here)](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository). Add user to docker group, logging out and back in to apply change
 
 ```sh
 sudo usermod -aG docker $USER
@@ -29,7 +27,7 @@ sudo apt install ffmpeg -y
 
 3\. Clone repo & build docker image
 
-Note: If operating behind corporate firewall, setup the proxy settings, e.g. http_proxy, https_proxy, in Linux environment before continuing
+*Note: If operating behind corporate firewall, setup the proxy settings, e.g. http_proxy, https_proxy, in Linux environment before continuing*
 
 ```sh
 git clone https://github.com/huichuno/edge-optimized-ai-assistant.git && cd edge-optimized-ai-assistant/app/kiosk
@@ -39,16 +37,16 @@ docker compose -f docker-compose-lnl.yml build
 
 4\. Start application and services
 
-Note: When launching the application for the first time, please allow a few minutes for the dependencies to download. You may check the containers log using *lazydocker*
+*Note: When launching the application for the first time, please allow a few minutes for the dependencies to download. You may check the containers log using lazydocker*
 
 ```sh
 docker compose -f docker-compose-lnl.yml -f compose.override.yml up -d
 ```
 
-5\. Launch browser and navigate to ***http://locahost:8080/*** on local machine or ***http://\<ip addr\>:8080/*** to access Open WebUI and run language model locally on-device
+5\. Launch browser and navigate to ***http://locahost:8080/*** on local machine or ***http://\<ip addr\>:8080/*** to access Open WebUI. Open WebUI is a self-hosted, open-source web interface that allows users to interact with LLMs locally
 
 6\. Optional Installation
-* [lazydocker](https://github.com/jesseduffield/lazydocker) - A simple terminal UI to visualize and interact with containers. After install, launch from `~/.local/bin/lazydocker`
+* [lazydocker](https://github.com/jesseduffield/lazydocker) - A simple terminal UI to visualize and interact with containers. After install, launch by executing the following command `~/.local/bin/lazydocker`
 
 ## How-To
 
@@ -68,7 +66,7 @@ docker compose -f docker-compose-lnl.yml -f compose.override.yml down
 
 ## For Developer
 
-### Install *uv* to manage python packages
+### Install *uv* to manage Python packages
 ```sh
 sudo apt install curl -y
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -76,7 +74,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 echo 'eval "$(uv generate-shell-completion bash)"' >> ~/.bashrc
 ```
 
-### Create an example project using *uv*
+### Create an example Python project using *uv*
 ```sh
 mkdir speech2text && cd speech2text
 uv venv --python 3.12
@@ -93,7 +91,7 @@ uv pip list
 uv pip freeze > requirements.txt
 ```
 
-### Sync environment
+### Sync virtual environment using requirements.txt file
 ```sh
 uv pip sync requirements.txt \
   --index-strategy unsafe-best-match \
