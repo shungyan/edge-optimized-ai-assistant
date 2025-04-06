@@ -45,12 +45,52 @@ docker compose -f docker-compose.yml -f compose.override.yml up -d
 
 5\. Launch browser and navigate to ***http://locahost:8080/*** on local machine or ***http://\<ip addr\>:8080/*** to access Open WebUI. Open WebUI is a self-hosted, open-source web interface that allows users to interact with LLMs locally
 
-6\. Optional Installation
+6\. Other Installation (Optional)
 * [lazydocker](https://github.com/jesseduffield/lazydocker) - A simple terminal UI to visualize and interact with containers. After install, launch by executing the following command `~/.local/bin/lazydocker`
 
 ## How-To
 
+### Allow developer to treat HTTP as secure on Chrome browser
+
+1\. Launch Chrome browswer and enter the follow in the address bar
+```sh
+chrome://flags/#unsafely-treat-insecure-origin-as-secure
+```
+2\. Enter `http://<ip addr>:8080` in the text box under "*Insecure origins treated as secure*" option. Select *Enabled* > *Relaunch* browser
+
+### Download LLM model
+
+1\. Proceed to *Create Admin Account* and *Sign in to Open WebUI* the first time launching Open WebUI
+
+2\. To download LLM model, click *Select a model* > search for "*ollama pull llama3.2*" > select *Pull "ollama pull ollama3.2" from ollama.com*
+
+3\. Wait for the download to complete. See https://ollama.com/library for the list of downloadable models
+
+### Create Open WebUI Workspace
+
+1\. On Open WebUI, navigate to *Workspace* > click '+' and update the fields below:
+* *Model Name*: Five Star Coffee Cafe
+* *Base Modle (From)*: llama3.2:latest
+* *Visibility*: Public
+* Model Params > *System Prompt*: \<refer to prompt file\>
+
+2\. Click *Save & Create*
+
+### Configure Open WebUI
+
+1\. On Open WebUI, navigate to:
+* Profile > Settings > Audio > SST Settings > *Instant Auto-Send After Voice Transcription*: On
+* Profile > Settings > Audio > TTS Settings > *Auto-playback response*: On
+* Profile > Settings > Audio > TTS Settings > *Voice*: [ alloy | echo | fable | onyx | nova | shimmer ]
+* Profile > Settings > Admin Settings > Code Execution > *Enable Code Execution*: Disabled
+* Profile > Settings > Admin Settings > Code Execution > *Enable Code Interpreter*: Disabled
+* Profile > Settings > Admin Settings > Evaluation > *Arena Models*: Disabled
+* Profile > Settings > Admin Settings > Audio > *Response splitting*: Punctuation
+* (Optional) Profile > Settings > Interface > on *Chat Background Image*, click *Upload* to upload new background image
+
+
 ### Stop application and services
+
 ```sh
 docker compose -f docker-compose.yml -f compose.override.yml down
 ```
