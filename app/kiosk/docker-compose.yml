@@ -1,6 +1,6 @@
 include:
   # stt
-  - ../../module/speech2text/docker-compose-lnl.yml 
+  - ../../module/speech2text/docker-compose.yml
 
 services:
   tts:
@@ -74,7 +74,7 @@ services:
       - AUDIO_TTS_OPENAI_API_BASE_URL=http://tts:8000/v1
       - AUDIO_TTS_OPENAI_API_KEY=no-need
       - AUDIO_TTS_SPLIT_ON=punctuation
-      - AUDIO_TTS_VOICE=alloy
+      - AUDIO_TTS_VOICE=echo
 
 networks:
   app-network:

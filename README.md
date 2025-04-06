@@ -32,7 +32,7 @@ sudo apt install ffmpeg -y
 ```sh
 git clone https://github.com/huichuno/edge-optimized-ai-assistant.git && cd edge-optimized-ai-assistant/app/kiosk
 
-docker compose -f docker-compose-lnl.yml build
+docker compose -f docker-compose.yml build
 ```
 
 4\. Start application and services
@@ -40,7 +40,7 @@ docker compose -f docker-compose-lnl.yml build
 *Note: When launching the application for the first time, please allow a few minutes for the dependencies to download. You may check the containers log using lazydocker*
 
 ```sh
-docker compose -f docker-compose-lnl.yml -f compose.override.yml up -d
+docker compose -f docker-compose.yml -f compose.override.yml up -d
 ```
 
 5\. Launch browser and navigate to ***http://locahost:8080/*** on local machine or ***http://\<ip addr\>:8080/*** to access Open WebUI. Open WebUI is a self-hosted, open-source web interface that allows users to interact with LLMs locally
@@ -52,7 +52,7 @@ docker compose -f docker-compose-lnl.yml -f compose.override.yml up -d
 
 ### Stop application and services
 ```sh
-docker compose -f docker-compose-lnl.yml -f compose.override.yml down
+docker compose -f docker-compose.yml -f compose.override.yml down
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>

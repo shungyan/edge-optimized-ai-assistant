@@ -6,7 +6,7 @@ services:
         HTTP_PROXY: ${HTTP_PROXY:-}
         HTTPS_PROXY: ${HTTPS_PROXY:-}
         NO_PROXY: ${NO_PROXY:-}
-      dockerfile: Dockerfile.lnl
+      dockerfile: Dockerfile
     image: speech2text
     container_name: stt
     restart: always
