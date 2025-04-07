@@ -73,6 +73,9 @@ chrome://flags/#unsafely-treat-insecure-origin-as-secure
 * *Base Modle (From)*: llama3.2:latest
 * *Visibility*: Public
 * Model Params > *System Prompt*: \<refer to prompt file\>
+* Advanced Params > *Stream Chat Response*: On
+* Advanced Params > *Temperature*: 0
+
 
 2\. Click *Save & Create*
 
