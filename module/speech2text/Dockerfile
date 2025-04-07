@@ -1,6 +1,7 @@
 # Reference:
 # https://pytorch.org/docs/main/notes/get_start_xpu.html
 # https://dgpu-docs.intel.com/driver/client/overview.html#installing-client-gpus-on-ubuntu-desktop-24-10
+# https://dgpu-docs.intel.com/devices/hardware-table.html
 
 FROM ubuntu:24.10
 COPY --from=ghcr.io/astral-sh/uv:0.5.20 /uv /uvx /bin/
