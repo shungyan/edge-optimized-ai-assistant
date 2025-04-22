@@ -1,6 +1,8 @@
 include:
   # stt
   - ../../module/speech2text/docker-compose.yml
+  # ipex-llm-ollama
+  - ../../module/ipex-llm-ollama/docker-compose.yml
 
 services:
   tts:
@@ -18,40 +20,7 @@ services:
     volumes:
       - ./.cache/tts/voices:/app/voices
       - ./.cache/tts/config:/app/config
-      - ./.cache/tts/hf_home:/app/hf_home    
-
-  ipex-llm-ollama:
-    image: intelanalytics/ipex-llm-inference-cpp-xpu:2.2.0-SNAPSHOT
-    container_name: ipex-llm-ollama
-    restart: always
-    ports:
-      - "11434:11434"
-    devices:
-      - /dev/dri
-    volumes:
-      - ./.cache/ollama:/root/.ollama/models
-    environment:
-      # Do do not set http_proxy. see issue: https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/discussions/20
-      - https_proxy=${https_proxy:-}
-      - no_proxy=open-webui,localhost,127.0.0.1
-      - PATH=/llm/ollama:${PATH}
-      - OLLAMA_HOST=0.0.0.0
-      - OLLAMA_KEEP_ALIVE=-1
-      - ZES_ENABLE_SYSMAN=1
-      - OLLAMA_INTEL_GPU=true
-      - ONEAPI_DEVICE_SELECTOR=level_zero:0
-      - DEVICE=Arc
-    shm_size: 32G
-    deploy:
-      resources:
-        limits:
-          memory: 32G
-    command: /bin/bash -c "cd /llm/scripts/ && \
-             source ipex-llm-init --gpu --device Arc >> \
-             ipex-llm-init.log 2>&1 && \
-             bash start-ollama.sh && \
-             tail -f /llm/ollama/ollama.log"
-
+      - ./.cache/tts/hf_home:/app/hf_home
   open-webui:
     image: ghcr.io/open-webui/open-webui:v0.5.20
     container_name: open-webui

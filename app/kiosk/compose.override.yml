@@ -2,3 +2,6 @@ services:
   stt:
     volumes:
       - ./.cache/stt/hf_home:/app/hf_home
+  ipex-llm-ollama:
+    volumes:
+      - ./.cache/ollama:/root/.ollama/models
