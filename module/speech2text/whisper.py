@@ -11,14 +11,114 @@ from fastapi.responses import PlainTextResponse, JSONResponse
 import uvicorn
 
 import openedai
+import tempfile
+import asyncio
+import io
+from io import BytesIO
+import glob 
+from pyannote.audio import Pipeline
+import soundfile as sf
+import numpy as np
+
+# Configure logging
+import logging
+logging.basicConfig(level=logging.DEBUG)  # Log all messages with level DEBUG and higher
+log = logging.getLogger(__name__)
+
 
 pipe = None
 app = openedai.OpenAIStub()
 
+def remove_old_wav_files():
+    # Path to /tmp directory (this might be different in your case if using custom temp directory)
+    temp_directory = "/tmp"
+
+    # Use glob to find all .wav files in the /tmp directory
+    wav_files = glob.glob(os.path.join(temp_directory, "*.wav"))
+
+    # Remove each .wav file found
+    if wav_files:
+        for wav_file in wav_files:
+            os.remove(wav_file)
+
+
+def diarization(file_data,file):
+
+    remove_old_wav_files()
+
+    file_like = BytesIO(file_data)
+
+    data, samplerate = sf.read(file_like) 
+
+    file_like.seek(0)
+    
+    # Load the VAD pipeline from pyannote
+    pipeline = Pipeline.from_pretrained('/app/config.yaml')
+
+    duration_seconds = len(data) / samplerate
+
+    if duration_seconds > 60:
+        log.info("Audio is longer than 1 minute.")
+        pipeline.to(torch.device("xpu"))
+    
+    # Apply the pipeline to get diarization (including speech segments)
+    diarization = pipeline({'audio': file_like, 'uri': file.filename})
+
+    first_speaker = None
+    speech_segments = []
+
+    # Iterate through the diarization
+    for turn, _, speaker in diarization.itertracks(yield_label=True):
+        # Set the first speaker based on the first turn
+        if first_speaker is None:
+            first_speaker = speaker
+            log.info(f"First speaker detected: {first_speaker}")
+
+        # Now check if the current speaker is the first speaker
+        if speaker == first_speaker:
+            speech_segments.append((turn.start, turn.end))
+            log.info(f"Speech detected from {turn.start:.2f}s to {turn.end:.2f}s by {first_speaker}")
+
+    output_audio = []
+
+    for start, end in speech_segments:
+        start_ms = int(start * samplerate)
+        end_ms = int(end * samplerate)
+        output_audio.append(data[start_ms:end_ms])
+
+    if output_audio:
+        output_audio = np.concatenate(output_audio, axis=0)
+        # Save to new file
+        sf.write('filtered_audio.wav', output_audio, samplerate)
+        output_path='/app/filtered_audio.wav'
+        return output_path
+    else:
+        log.info("No matching segments found!")
+        return None
+
 async def whisper(file, response_format: str, **kwargs):
+
     global pipe
 
-    result = pipe(await file.read(), **kwargs)
+    file_data = await file.read()  
+
+    try:
+        processed_file_path = await asyncio.to_thread(diarization, file_data,file)
+        log.info(f"Diarization completed: {processed_file_path}")
+    except Exception as e:
+        log.error(f"Diarization failed: {e}")
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+
+
+    # Ensure the file exists before reading
+    while not os.path.exists(processed_file_path):
+        await asyncio.sleep(0.1)
+
+    with open(processed_file_path, "rb") as f:
+        processed_data = f.read()
+
+
+    result = pipe(processed_data, **kwargs)
 
     filename_noext, ext = os.path.splitext(file.filename)
 
@@ -104,32 +204,6 @@ async def transcriptions(
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-@app.post("/v1/audio/translations")
-async def translations(
-        file: UploadFile,
-        model: str = Form(...),
-        prompt: Optional[str] = Form(None),
-        response_format: Optional[str] = Form("json"),
-        temperature: Optional[float] = Form(None),
-    ):
-    global pipe
-
-    try:
-        m = {'generate_kwargs': {"task": "translate"}}
-
-    # May work soon, https://github.com/huggingface/transformers/issues/27317
-    #    if prompt:
-    #        kwargs["initial_prompt"] = prompt
-        if temperature:
-            kwargs['generate_kwargs']["temperature"] = temperature
-            kwargs['generate_kwargs']['do_sample'] = True
-
-        kwargs['return_timestamps'] = response_format in ["verbose_json", "srt", "vtt"]
-
-        return await whisper(file, response_format, **kwargs)
-
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(
