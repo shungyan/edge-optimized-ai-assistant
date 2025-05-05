@@ -29,22 +29,7 @@ log = logging.getLogger(__name__)
 pipe = None
 app = openedai.OpenAIStub()
 
-def remove_old_wav_files():
-    # Path to /tmp directory (this might be different in your case if using custom temp directory)
-    temp_directory = "/tmp"
-
-    # Use glob to find all .wav files in the /tmp directory
-    wav_files = glob.glob(os.path.join(temp_directory, "*.wav"))
-
-    # Remove each .wav file found
-    if wav_files:
-        for wav_file in wav_files:
-            os.remove(wav_file)
-
-
 def diarization(file_data,file):
-
-    remove_old_wav_files()
 
     file_like = BytesIO(file_data)
 
@@ -52,8 +37,7 @@ def diarization(file_data,file):
 
     file_like.seek(0)
     
-    # Load the VAD pipeline from pyannote
-    pipeline = Pipeline.from_pretrained('/app/config.yaml')
+    
 
     duration_seconds = len(data) / samplerate
 
@@ -65,10 +49,11 @@ def diarization(file_data,file):
     diarization = pipeline({'audio': file_like, 'uri': file.filename})
 
     first_speaker = None
-    speech_segments = []
+    speech_segments = []    
 
     # Iterate through the diarization
     for turn, _, speaker in diarization.itertracks(yield_label=True):
+        log.info(f"start={turn.start:.1f}s stop={turn.end:.1f}s speaker_{speaker}")
         # Set the first speaker based on the first turn
         if first_speaker is None:
             first_speaker = speaker
@@ -249,5 +234,8 @@ if __name__ == "__main__":
         sys.exit(0)
 
     app.register_model('whisper-1', args.model)
+
+    # Load the VAD pipeline from pyannote
+    pipeline = Pipeline.from_pretrained('/app/config.yaml')
 
     uvicorn.run(app, host=args.host, port=args.port) # , root_path=cwd, access_log=False, log_level="info", ssl_keyfile="cert.pem", ssl_certfile="cert.pem")
